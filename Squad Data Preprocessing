@@ -1,0 +1,85 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Oct 31 12:27:48 2019
+
+@author: atharv
+"""
+
+import numpy as np
+import re
+import time 
+import json
+# importing the data
+
+file = open("train.json").read()
+data = json.loads(file)["data"]
+
+qas = []
+ans_data = []
+unanswered_ques = []
+for x in data:
+    for y in x["paragraphs"]:
+        for z in y["qas"]:
+            if z["answers"]:
+                ans_data.append((z['question'], z["answers"][0]["text"]))
+            else:
+                unanswered_ques.append(z["question"])
+        
+# Function to clean the text
+        
+def clean_text(text,text1):
+    text = text.lower()
+    text = re.sub(r"i'm", "i am", text)
+    text = re.sub(r"he's", "he is", text)
+    text = re.sub(r"she's", "she is", text)
+    text = re.sub(r"that's", "that is", text)
+    text = re.sub(r"what's", "what is", text)
+    text = re.sub(r"where's", "where is", text)
+    text = re.sub(r"\'ll", " will", text)
+    text = re.sub(r"it's", "it is", text)
+    text = re.sub(r"\'re", " are", text)
+    text = re.sub(r"\'d", " would", text)
+    text = re.sub(r"\'ve", " have", text)
+    text = re.sub(r"won't", "will not", text)
+    text = re.sub(r"can't", "can not", text)
+    text = re.sub(r"[-()\"#/@;:{}=+~|.?,]", "", text)
+    text1 = text1.lower()
+    text1 = re.sub(r"i'm", "i am", text1)
+    text1 = re.sub(r"he's", "he is", text1)
+    text1 = re.sub(r"she's", "she is", text1)
+    text1 = re.sub(r"that's", "that is", text1)
+    text1 = re.sub(r"what's", "what is", text1)
+    text1 = re.sub(r"where's", "where is", text1)
+    text1 = re.sub(r"\'ll", " will", text1)
+    text1 = re.sub(r"it's", "it is", text1)
+    text1 = re.sub(r"\'re", " are", text1)
+    text1 = re.sub(r"\'d", " would", text1)
+    text1 = re.sub(r"\'ve", " have", text1)
+    text1 = re.sub(r"won't", "will not", text1)
+    text1 = re.sub(r"can't", "can not", text1)
+    text1 = re.sub(r"[-(\"#/@;:{}=+~|.?,]", "", text1)
+    return text, text1
+
+# CLeaning all the questions
+clean_data = []
+
+for q,a in ans_data:
+    clean_data.append(clean_text(q,a))
+    
+clean_data_list = list(clean_data)
+    
+# Count the number of words in the data
+    
+    
+word_to_count = {}
+
+for q_data in clean_data:
+    for word in q_data:
+        if word not in word_to_count:
+            word_to_count[word] = 1
+        else:
+            word_to_count[word] += 1
+
+#for x in ans_data:
+#    print(f'ques = {x[0]}\nans = {x[1]}\n\n')
+    
